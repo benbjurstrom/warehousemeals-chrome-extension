@@ -397,9 +397,14 @@ async function syncReceipts(startDate, endDate) {
   try {
     // Step 1: Fetch receipt list from Costco
     broadcastProgress({ phase: 'listing', message: 'Fetching receipt list from Costco...' });
-    const receipts = await fetchCostcoReceipts(startDate, endDate);
+    const allReceipts = await fetchCostcoReceipts(startDate, endDate);
 
-    if (!receipts || receipts.length === 0) {
+    // Filter out fuel receipts and refunds before fetching details
+    const receipts = (allReceipts || []).filter(
+      (r) => r.documentType !== 'FuelReceipts' && r.transactionType !== 'Refund'
+    );
+
+    if (receipts.length === 0) {
       return { success: true, message: 'No receipts found for this date range.', count: 0 };
     }
 

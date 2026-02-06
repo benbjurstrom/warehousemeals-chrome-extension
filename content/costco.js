@@ -120,6 +120,8 @@
         ) {
           receipts {
             transactionBarcode
+            documentType
+            transactionType
           }
         }
       }
