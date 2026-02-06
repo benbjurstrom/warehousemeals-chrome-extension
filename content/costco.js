@@ -21,6 +21,10 @@
 (function () {
   'use strict';
 
+  // Prevent double initialization if injected both declaratively and programmatically
+  if (window.__warehouseMealsInjected) return;
+  window.__warehouseMealsInjected = true;
+
   // Costco API configuration (same values the costco.com website uses)
   const COSTCO_API = {
     url: 'https://ecom-api.costco.com/ebusiness/order/v1/orders/graphql',
@@ -229,10 +233,13 @@
   }
 
   /**
-   * Handles messages from the extension's background script.
-   * This is how the popup/background communicates with this content script.
+   * Connect to the background script via a long-lived port.
+   * This is more reliable than chrome.runtime.onMessage, which can fail
+   * if Chrome's internal tab-to-content-script routing breaks.
    */
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  const port = chrome.runtime.connect({ name: 'costco' });
+
+  port.onMessage.addListener((message) => {
     const handleMessage = async () => {
       switch (message.action) {
         case 'fetchCostcoReceipts':
@@ -252,12 +259,9 @@
       }
     };
 
-    // Handle async response
     handleMessage()
-      .then(sendResponse)
-      .catch((err) => sendResponse({ error: err.message }));
-
-    return true; // Required for async sendResponse
+      .then((result) => port.postMessage({ id: message.id, result }))
+      .catch((err) => port.postMessage({ id: message.id, error: err.message }));
   });
 
   console.log('[WarehouseMeals] Extension ready');

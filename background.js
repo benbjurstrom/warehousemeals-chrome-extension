@@ -265,6 +265,22 @@ async function findCostcoTab() {
  * Sends a message to the content script running on costco.com.
  * The content script handles all Costco API communication.
  */
+// Store active content script ports by tab ID
+const contentPorts = new Map();
+
+chrome.runtime.onConnect.addListener((port) => {
+  if (port.name !== 'costco') return;
+
+  const tabId = port.sender?.tab?.id;
+  if (!tabId) return;
+
+  contentPorts.set(tabId, port);
+
+  port.onDisconnect.addListener(() => {
+    contentPorts.delete(tabId);
+  });
+});
+
 async function messageContentScript(message) {
   const tab = await findCostcoTab();
 
@@ -272,18 +288,26 @@ async function messageContentScript(message) {
     throw new Error('Please open costco.com in a browser tab');
   }
 
+  const port = contentPorts.get(tab.id);
+  if (!port) {
+    throw new Error('Could not connect to costco.com. Please refresh the page.');
+  }
+
   return new Promise((resolve, reject) => {
-    chrome.tabs.sendMessage(tab.id, message, (response) => {
-      if (chrome.runtime.lastError) {
-        reject(new Error('Could not connect to costco.com. Please refresh the page.'));
-        return;
-      }
-      if (response?.error) {
+    const id = Math.random().toString(36).slice(2);
+
+    const listener = (response) => {
+      if (response.id !== id) return;
+      port.onMessage.removeListener(listener);
+      if (response.error) {
         reject(new Error(response.error));
-        return;
+      } else {
+        resolve(response.result);
       }
-      resolve(response);
-    });
+    };
+
+    port.onMessage.addListener(listener);
+    port.postMessage({ ...message, id });
   });
 }
 
@@ -293,10 +317,8 @@ async function messageContentScript(message) {
 async function isCostcoLoggedIn() {
   try {
     const response = await messageContentScript({ action: 'checkCostcoLogin' });
-    console.log('[WarehouseMeals] checkCostcoLogin response:', response);
     return response?.loggedIn || false;
   } catch (err) {
-    console.error('[WarehouseMeals] checkCostcoLogin failed:', err);
     return false;
   }
 }
