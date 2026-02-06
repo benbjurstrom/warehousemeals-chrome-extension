@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WarehouseMeals</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 946" fill="none" class="logo-icon">
+          <path fill="#C10007" d="M1075.11 577.05c40 23.094 40 80.83 0 103.924L630 937.962a60 60 0 0 1-60 0l-445.254-257.07c-40-23.094-40-80.829 0-103.924l445.112-256.987a60 60 0 0 1 60 0L1075.11 577.05Z"/>
+          <path fill="#155DFC" d="M759.141 314.621 1110 517.192c40 23.094 90-5.774 90-51.962V60.09c0-46.188-50-75.056-90-51.962l-350.859 202.57c-40 23.094-40 80.829 0 103.923ZM90 517.028l350.576-202.406c40-23.095 40-80.83 0-103.924L90 8.291C50-14.803 0 14.065 0 60.253v404.814c0 46.188 50 75.056 90 51.961Z"/>
+        </svg>
+        <span class="logo-text">WarehouseMeals</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- WarehouseMeals Connection -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">WarehouseMeals Account</h2>
+          <span id="wm-status" class="status-badge status-disconnected">Disconnected</span>
+        </div>
+        <div id="wm-connected" class="connected-state hidden">
+          <button id="wm-disconnect" class="btn btn-outline btn-sm">Disconnect</button>
+        </div>
+        <div id="wm-disconnected" class="disconnected-state">
+          <p class="hint">Connect to sync your receipts</p>
+          <button id="wm-connect" class="btn btn-primary">Connect Account</button>
+        </div>
+      </section>
+
+      <!-- Costco Connection -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">Costco Account</h2>
+          <span id="costco-status" class="status-badge status-disconnected">Disconnected</span>
+        </div>
+        <div id="costco-connected" class="connected-state hidden">
+          <p class="hint">Ready to sync receipts</p>
+        </div>
+        <div id="costco-disconnected" class="disconnected-state">
+          <p class="hint">Sign in to <a href="https://www.costco.com" target="_blank">costco.com</a> to connect</p>
+        </div>
+      </section>
+
+      <!-- Sync Section -->
+      <section class="section" id="sync-section">
+        <div class="section-header">
+          <h2 class="section-title">Sync Receipts</h2>
+        </div>
+        <div class="sync-options">
+          <div class="date-range">
+            <label class="label">Date Range</label>
+            <select id="date-range" class="select">
+              <option value="30">Last 30 days</option>
+              <option value="60">Last 60 days</option>
+              <option value="90" selected>Last 90 days</option>
+              <option value="180">Last 6 months</option>
+              <option value="365">Last year</option>
+            </select>
+          </div>
+          <button id="sync-btn" class="btn btn-primary btn-block" disabled>
+            <span class="btn-text">Sync Now</span>
+            <span class="btn-loading hidden">
+              <svg class="spinner" viewBox="0 0 24 24">
+                <circle class="spinner-circle" cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="3"/>
+              </svg>
+              <span class="btn-loading-text">Syncing...</span>
+            </span>
+          </button>
+        </div>
+        <div id="sync-result" class="sync-result hidden"></div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <a href="https://warehousemeals.com" target="_blank" class="footer-link">Open WarehouseMeals</a>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
