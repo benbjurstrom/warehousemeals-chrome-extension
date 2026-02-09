@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get version from manifest
+        id: version
+        run: echo "version=v$(jq -r .version manifest.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Check if release already exists
+        id: check
+        run: |
+          if gh release view "$VERSION" > /dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build zip
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          mkdir -p build/ext
+          cp manifest.json build/ext/
+          cp background.js build/ext/
+          cp -r content build/ext/
+          cp -r popup build/ext/
+          cp -r icons build/ext/
+          cd build/ext
+          zip -r ../warehousemeals-chrome.zip . -x '.*'
+
+      - name: Create release
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          gh release create "$VERSION" \
+            build/warehousemeals-chrome.zip \
+            --title "$VERSION" \
+            --generate-notes
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

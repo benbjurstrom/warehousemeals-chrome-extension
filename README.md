@@ -4,9 +4,29 @@ Sync your Costco receipts to [WarehouseMeals](https://warehousemeals.com) with o
 
 ## What This Extension Does
 
-1. **Connects to your WarehouseMeals account** via secure OAuth flow
+1. **Connects to your WarehouseMeals account** via secure login
 2. **Reads your Costco receipts** from costco.com when you click "Sync"
 3. **Sends receipt data to WarehouseMeals** to build your personalized food catalog
+
+## Install
+
+A Chrome Web Store listing is coming soon. In the meantime, you can install the extension manually:
+
+1. [Download the latest release](https://github.com/benbjohnson/warehousemeals-chrome/releases/latest) (the `.zip` file)
+2. Unzip the file
+3. Open Chrome and go to `chrome://extensions`
+4. Turn on **Developer mode** using the toggle in the top-right corner
+5. Click **Load unpacked** and select the unzipped folder
+6. You should see the WarehouseMeals icon in your toolbar — you're all set!
+
+## Usage
+
+1. Sign in to [costco.com](https://www.costco.com) in a browser tab
+2. Click the WarehouseMeals extension icon
+3. Connect your WarehouseMeals account if you haven't already
+4. Click **Sync Now**
+
+Your receipts will be imported into your WarehouseMeals account.
 
 ## Privacy & Security
 
@@ -14,33 +34,7 @@ This extension is designed with your privacy in mind. It only accesses your Cost
 
 The extension does not access your payment methods or personal info, does not send data anywhere except WarehouseMeals, does not run in the background, and does not track your browsing.
 
-## Permissions Explained
-
-| Permission | Why We Need It |
-|------------|----------------|
-| `storage` | Store your WarehouseMeals login token |
-| `identity` | OAuth flow for WarehouseMeals login |
-| `tabs` | Find your open costco.com tab |
-| `https://www.costco.com/*` | Run content script to read receipts |
-| `https://ecom-api.costco.com/*` | Fetch receipt data from Costco API |
-| `https://warehousemeals.com/*` | Send receipts to your account |
-
-## Getting Started
-
-1. Install the extension from the Chrome Web Store
-2. Sign in to [costco.com](https://www.costco.com) in a browser tab
-3. Click the extension icon and connect your WarehouseMeals account
-4. Click "Sync Now"
-
-## Source Code
-
-This extension is open source. You can audit every line of code to verify exactly what it does.
-
-## Building
-
-Run `./build.sh` to create a production zip. This swaps the dev domain (`warehousemeals.test`) to `warehousemeals.com` and outputs `build/warehousemeals-chrome.zip`.
-
 ## Questions?
 
 - **Website**: [warehousemeals.com](https://warehousemeals.com)
-- **Issues**: Report bugs or request features on GitHub
+- **Issues**: Report bugs or request features on [GitHub](https://github.com/benbjohnson/warehousemeals-chrome/issues)
