@@ -22,10 +22,24 @@
 // ============================================================
 
 const CONFIG = {
-  // Change to 'https://warehousemeals.com' for production
-  warehouseMealsUrl: 'https://warehousemeals.test',
+  warehouseMealsUrl: 'https://warehousemeals.com',
   fetchTimeoutMs: 15000,
 };
+
+/**
+ * Returns the API base URL.
+ * Checks chrome.storage.local for a `warehouseMealsUrlOverride` key first,
+ * allowing local testing without modifying source code.
+ *
+ * To override in DevTools console:
+ *   chrome.storage.local.set({ warehouseMealsUrlOverride: 'https://warehousemeals.test' })
+ * To clear:
+ *   chrome.storage.local.remove(['warehouseMealsUrlOverride'])
+ */
+async function getApiUrl() {
+  const { warehouseMealsUrlOverride } = await getStorage(['warehouseMealsUrlOverride']);
+  return warehouseMealsUrlOverride || CONFIG.warehouseMealsUrl;
+}
 
 // ============================================================
 // Sync State
@@ -116,7 +130,8 @@ async function authenticateWithWarehouseMeals() {
   const redirectUri = chrome.identity.getRedirectURL();
 
   // Build the authorization URL
-  const authUrl = `${CONFIG.warehouseMealsUrl}/auth/extension/authorize?redirect_uri=${encodeURIComponent(redirectUri)}`;
+  const apiUrl = await getApiUrl();
+  const authUrl = `${apiUrl}/auth/extension/authorize?redirect_uri=${encodeURIComponent(redirectUri)}`;
 
   return new Promise((resolve, reject) => {
     // Open the auth popup
@@ -237,7 +252,8 @@ async function validateToken() {
   }
 
   try {
-    const response = await authenticatedFetch(`${CONFIG.warehouseMealsUrl}/api/user`);
+    const apiUrl = await getApiUrl();
+    const response = await authenticatedFetch(`${apiUrl}/api/user`);
     return { valid: response.ok };
   } catch (err) {
     if (err instanceof NetworkError) {
@@ -352,7 +368,8 @@ async function fetchCostcoReceiptDetails(barcode) {
  * Sends receipt data to the WarehouseMeals API.
  */
 async function sendReceiptsToWarehouseMeals(receipts) {
-  const response = await authenticatedFetch(`${CONFIG.warehouseMealsUrl}/api/receipts/import`, {
+  const apiUrl = await getApiUrl();
+  const response = await authenticatedFetch(`${apiUrl}/api/receipts/import`, {
     method: 'POST',
     body: JSON.stringify({ receipts }),
   });

@@ -36,6 +36,10 @@ The extension does not access your payment methods or personal info, does not se
 
 This extension is open source. You can audit every line of code to verify exactly what it does.
 
+## Building
+
+Run `./build.sh` to create a production zip. This swaps the dev domain (`warehousemeals.test`) to `warehousemeals.com` and outputs `build/warehousemeals-chrome.zip`.
+
 ## Questions?
 
 - **Website**: [warehousemeals.com](https://warehousemeals.com)
