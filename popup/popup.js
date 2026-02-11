@@ -282,6 +282,16 @@ async function init() {
     }
   });
 
+  // Set footer link to active API URL
+  try {
+    const { url } = await sendMessage({ action: 'getApiUrl' });
+    const link = document.getElementById('footer-link');
+    link.href = url;
+    link.textContent = url.replace('https://', '');
+  } catch (err) {
+    // Fall back to default href
+  }
+
   // Get initial status
   await refreshStatus();
 }

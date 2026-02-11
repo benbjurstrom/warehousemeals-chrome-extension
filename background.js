@@ -538,6 +538,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         };
       }
 
+      // Get the active API URL
+      case 'getApiUrl':
+        return { url: await getApiUrl() };
+
       // Connect to WarehouseMeals
       case 'authenticateWarehouseMeals':
         return authenticateWithWarehouseMeals();
