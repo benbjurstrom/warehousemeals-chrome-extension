@@ -1,3 +1,5 @@
+<img width="1280" height="800" alt="screenshot" src="https://github.com/user-attachments/assets/d244f7a8-72f0-4fb7-9f4e-558403e8bb56" />
+
 # WarehouseMeals Chrome Extension
 
 Sync your Costco receipts to [WarehouseMeals](https://warehousemeals.com) with one click.
